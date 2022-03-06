@@ -17,7 +17,7 @@ store_initial_final_states_only = False
 # Vehicle settings
 vehicle_mass = 4.0E3
 
-dt = 14400
+dt = 10**5
 
 # Define settings for celestial bodies
 bodies_to_create = ["Sun", "Saturn", "Mercury", "Uranus", "Venus", "Neptune", "Pluto", 'Earth','Mars','Jupiter',"Moon"]
