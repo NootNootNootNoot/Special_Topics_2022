@@ -94,8 +94,9 @@ NN_pos.compile(optimizer="adam",
            loss="MeanSquaredError",
            metrics=["RootMeanSquaredError"])
 
-NN_vel.fit(x_train_scaled, y_vel_train, epochs=2)
-NN_pos.fit(x_train_scaled, y_pos_train, epochs=2)
+
+hist_vel = NN_vel.fit(x_train_scaled, y_vel_train, epochs=13, validation_split = 0.1)
+hist_pos = NN_pos.fit(x_train_scaled, y_pos_train, epochs=8, validation_split = 0.1)
 
 y_vel_test_predict = NN_vel.predict(x_test_scaled)
 y_pos_test_predict =NN_pos.predict(x_test_scaled)
@@ -141,6 +142,22 @@ ax2.legend(fontsize=32)
 fig.set_tight_layout("tight")
 ax2.set_xticks(ax2.get_xticks(),labelsize=22)
 ax2.set_yticks(ax2.get_yticks(),labelsize=22)
+
+plt.subplot(1, 2, 1)
+plt.plot(hist_vel.history['loss'], label='Training Loss')
+plt.plot(hist_vel.history['val_loss'], label='Validation Loss')
+plt.xlabel('Epochs')
+plt.ylabel('Loss')
+plt.legend()
+
+plt.subplot(1, 2, 2)
+plt.plot(hist_pos.history['loss'], label='Training Loss')
+plt.plot(hist_pos.history['val_loss'], label='Validation Loss')
+plt.xlabel('Epochs')
+plt.ylabel('Loss')
+plt.legend()
+
+plt.show()
 
 # NN_vel.save("model_3/model_vel")
 # NN_pos.save("model_3/model_pos")
