@@ -45,7 +45,7 @@ for i in tqdm(range(1)):
     initial_state = initial_state * np.random.choice([-1,1], 6)
 
     # initial_state = np.array([1,1,1,
-    #                           0,0,27E3])
+    #                           0,0,-27E3])
     # initial_state[:3] /= np.linalg.norm(initial_state[:3])/au
 
     # Create vehicle object and add it to the existing system of bodies

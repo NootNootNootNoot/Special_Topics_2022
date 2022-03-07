@@ -6,6 +6,7 @@ from tqdm import tqdm
 from matplotlib import pyplot as plt
 import seaborn as sns
 from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.ticker as ticker
 
 sns.set_theme()
 sns.set_palette("rocket")
@@ -38,8 +39,8 @@ def plot_transfer(state_history,
         transfer = ax.scatter(state_history[:, 0],
                               state_history[:, 1],
                               state_history[:, 2],
-                              c=np.linalg.norm(state_history[:,3:] / 1000,
-                                           axis=1),
+                              c=np.round(np.linalg.norm(state_history[:,3:] / 1000,
+                                           axis=1),2),
                               cmap="coolwarm",
                               zorder=12)
         cbar = plt.colorbar(transfer, ax=ax)
@@ -47,8 +48,9 @@ def plot_transfer(state_history,
 
         if dark_theme:
             cbar.ax.tick_params(color="white")
-            cbar.ax.set_yticklabels(labels=cbar.ax.get_yticks(), color="white")
-            cbar.set_label('Velocity Magnitude [km/s]', color="white")
+            cbar.ax.set_yticklabels(labels=cbar.ax.get_yticks(), color="white",
+                                    fontsize=22)
+            cbar.set_label('Velocity Magnitude [km/s]', color="white", fontsize=26)
 
 
     else:
@@ -100,14 +102,14 @@ trajectories = np.zeros(2, dtype=object)
 integrator = np.copy(trajectories)
 
 counter = 0
-for file in tqdm(os.listdir(folder_path)):
+for file in tqdm(os.listdir(folder_path)[:2]):
+    print(file)
     contents = np.genfromtxt(folder_path + file, delimiter=",")
-    if np.abs(np.linalg.norm(contents[1:4, 1]) - au) <= au and counter < 6:
-        contents[1:4, 1:] /= au
-        contents[4:, 1:] /= 10 ** 3
-        trajectories[counter] = contents[1:,1:7].reshape(1, -1, order = 'F')[0]
-        integrator[counter] = contents[1:,1:].reshape(1, -1, order = 'F')[0]
-        counter += 1
+    contents[1:4, 1:] /= au
+    contents[4:, 1:] /= 10 ** 3
+    trajectories[counter] = contents[1:,1:7].reshape(1, -1, order = 'F')[0]
+    integrator[counter] = contents[1:,1:].reshape(1, -1, order = 'F')[0]
+    counter += 1
 
 integrator = np.concatenate(integrator).reshape(2, -1 ,6)
 x = np.concatenate(trajectories).reshape(-1,x_size)
@@ -128,8 +130,5 @@ fig = plt.figure()
 ax = plt.subplot2grid((1, 1), (0, 0), rowspan=1, colspan=1, projection="3d")
 plt.axis('off')
 for i,trajectory in enumerate(y):
-
     if i ==0:
         plot_transfer(trajectory, celestial_bodies=False, ax=ax, fig=fig)
-    else:
-        plot_transfer(trajectory, celestial_bodies=False,  ax=ax, fig=fig,cbar_plot=False)
